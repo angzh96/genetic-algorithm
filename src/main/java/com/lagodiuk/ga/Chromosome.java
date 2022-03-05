@@ -18,9 +18,9 @@ package com.lagodiuk.ga;
 import java.util.List;
 
 public interface Chromosome<C extends Chromosome<C>> {
-	
+	//交叉
 	List<C> crossover( C anotherChromosome );
-	
+	//变异
 	C mutate();
 
 }

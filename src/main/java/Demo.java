@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
-import com.lagodiuk.ga.Chromosome;
 import com.lagodiuk.ga.Fitness;
 import com.lagodiuk.ga.GeneticAlgorithm;
 import com.lagodiuk.ga.IterartionListener;
 import com.lagodiuk.ga.Population;
+import com.lagodiuk.ga.MyVector;
+import com.lagodiuk.ga.MyVectorFitness;
 
 public class Demo {
 
 	public static void main(String[] args) {
-		Population<MyVector> population = createInitialPopulation(5);
+		Population<MyVector> population = createInitialPopulation(10);
 
 		Fitness<MyVector, Double> fitness = new MyVectorFitness();
 
@@ -81,91 +79,5 @@ public class Demo {
 				}
 			}
 		});
-	}
-
-	/**
-	 * Chromosome, which represents vector of five integers
-	 */
-	public static class MyVector implements Chromosome<MyVector>, Cloneable {
-
-		private static final Random random = new Random();
-
-		private final int[] vector = new int[5];
-
-		/**
-		 * Returns clone of current chromosome, which is mutated a bit
-		 */
-		@Override
-		public MyVector mutate() {
-			MyVector result = this.clone();
-
-			// just select random element of vector
-			// and increase or decrease it on small value
-			int index = random.nextInt(this.vector.length);
-			int mutationValue = random.nextInt(3) - random.nextInt(3);
-			result.vector[index] += mutationValue;
-
-			return result;
-		}
-
-		/**
-		 * Returns list of siblings <br/>
-		 * Siblings are actually new chromosomes, <br/>
-		 * created using any of crossover strategy
-		 */
-		@Override
-		public List<MyVector> crossover(MyVector other) {
-			MyVector thisClone = this.clone();
-			MyVector otherClone = other.clone();
-
-			// one point crossover
-			int index = random.nextInt(this.vector.length - 1);
-			for (int i = index; i < this.vector.length; i++) {
-				int tmp = thisClone.vector[i];
-				thisClone.vector[i] = otherClone.vector[i];
-				otherClone.vector[i] = tmp;
-			}
-
-			return Arrays.asList(thisClone, otherClone);
-		}
-
-		@Override
-		protected MyVector clone() {
-			MyVector clone = new MyVector();
-			System.arraycopy(this.vector, 0, clone.vector, 0, this.vector.length);
-			return clone;
-		}
-
-		public int[] getVector() {
-			return this.vector;
-		}
-
-		@Override
-		public String toString() {
-			return Arrays.toString(this.vector);
-		}
-	}
-
-	/**
-	 * Fitness function, which calculates difference between chromosomes vector
-	 * and target vector
-	 */
-	public static class MyVectorFitness implements Fitness<MyVector, Double> {
-
-		private final int[] target = { 10, 20, 30, 40, 50 };
-
-		@Override
-		public Double calculate(MyVector chromosome) {
-			double delta = 0;
-			int[] v = chromosome.getVector();
-			for (int i = 0; i < 5; i++) {
-				delta += this.sqr(v[i] - this.target[i]);
-			}
-			return delta;
-		}
-
-		private double sqr(double x) {
-			return x * x;
-		}
 	}
 }
