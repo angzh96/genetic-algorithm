@@ -14,38 +14,36 @@
  * limitations under the License.
  ******************************************************************************/
 
-import com.lagodiuk.ga.Fitness;
-import com.lagodiuk.ga.GeneticAlgorithm;
-import com.lagodiuk.ga.IterartionListener;
-import com.lagodiuk.ga.Population;
-import com.lagodiuk.ga.MyVector;
-import com.lagodiuk.ga.MyVectorFitness;
+import com.lagodiuk.ga.*;
 
 public class Demo {
 
 	public static void main(String[] args) {
-		Population<MyVector> population = createInitialPopulation(10);
+		Population population = createInitialPopulation(10);
 
-		Fitness<MyVector, Double> fitness = new MyVectorFitness();
+//		ChromosomeFitness fitness = new ChromosomeFitness();
 
-		GeneticAlgorithm<MyVector, Double> ga = new GeneticAlgorithm<MyVector, Double>(population, fitness);
+		GeneticAlgorithm ga = new GeneticAlgorithm(population);
 
-		addListener(ga);
+		System.out.println(String.format("%s\t%s\t%s", "iter", "fit", "chromosome"));
+		ga.addIterationListener(new IterationListener());
 
-		ga.evolve(500);
+//		addListener(ga);
+
+		ga.multiEvolve(500);
 	}
 
 	/**
 	 * The simplest strategy for creating initial population <br/>
 	 * in real life it could be more complex
 	 */
-	private static Population<MyVector> createInitialPopulation(int populationSize) {
-		Population<MyVector> population = new Population<MyVector>();
-		MyVector base = new MyVector();
+	private static Population createInitialPopulation(int populationSize) {
+		Population population = new Population();
+		Chromosome base = new Chromosome();
 		for (int i = 0; i < populationSize; i++) {
 			// each member of initial population
 			// is mutated clone of base chromosome
-			MyVector chr = base.mutate();
+			Chromosome chr = base.mutate();
 			population.addChromosome(chr);
 		}
 		return population;
@@ -54,30 +52,30 @@ public class Demo {
 	/**
 	 * After each iteration Genetic algorithm notifies listener
 	 */
-	private static void addListener(GeneticAlgorithm<MyVector, Double> ga) {
+//	private static void addListener(GeneticAlgorithm<MyVector, Double> ga) {
 		// just for pretty print
-		System.out.println(String.format("%s\t%s\t%s", "iter", "fit", "chromosome"));
+//		System.out.println(String.format("%s\t%s\t%s", "iter", "fit", "chromosome"));
 
 		// Lets add listener, which prints best chromosome after each iteration
-		ga.addIterationListener(new IterartionListener<MyVector, Double>() {
-
-			private final double threshold = 1e-5;
-
-			@Override
-			public void update(GeneticAlgorithm<MyVector, Double> ga) {
-
-				MyVector best = ga.getBest();
-				double bestFit = ga.fitness(best);
-				int iteration = ga.getIteration();
-
-				// Listener prints best achieved solution
-				System.out.println(String.format("%s\t%s\t%s", iteration, bestFit, best));
-
-				// If fitness is satisfying - we can stop Genetic algorithm
-				if (bestFit < this.threshold) {
-					ga.terminate();
-				}
-			}
-		});
-	}
+//		ga.addIterationListener(new IterartionListener<MyVector, Double>() {
+//
+//			private final double threshold = 1e-5;
+//
+//			@Override
+//			public void update(GeneticAlgorithm<MyVector, Double> ga) {
+//
+//				MyVector best = ga.getBest();
+//				double bestFit = ga.fitness(best);
+//				int iteration = ga.getIteration();
+//
+//				// Listener prints best achieved solution
+//				System.out.println(String.format("%s\t%s\t%s", iteration, bestFit, best));
+//
+//				// If fitness is satisfying - we can stop Genetic algorithm
+//				if (bestFit < this.threshold) {
+//					ga.terminate();
+//				}
+//			}
+//		});
+//	}
 }
