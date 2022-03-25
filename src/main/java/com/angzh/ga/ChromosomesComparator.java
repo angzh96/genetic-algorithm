@@ -1,4 +1,4 @@
-package com.lagodiuk.ga;
+package com.angzh.ga;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -14,12 +14,13 @@ import java.util.WeakHashMap;
  */
 public class ChromosomesComparator implements Comparator<Chromosome> {
 
-    //cache用来缓存计算过适应度的个体
+    // cache用来缓存计算过的<个体，适应度>
     private final Map<Chromosome, Double> cache = new WeakHashMap<Chromosome, Double>();
 
+    // 适应度计算类，计算个体的适应度
     private final ChromosomeFitness fitnessFunc = new ChromosomeFitness();
 
-    //适应度计算
+    // 若chr已存在cache里，直接取出对应适应度；若不在，则计算其适应度并存入cache
     public double fit(Chromosome chr) {
         Double fit = this.cache.get(chr);
         if(fit == null) {
@@ -29,6 +30,7 @@ public class ChromosomesComparator implements Comparator<Chromosome> {
         return fit;
     }
 
+    // 重写对chromosome的比较
     @Override
     public int compare(Chromosome chr1, Chromosome chr2) {
         Double fit1 = this.fit(chr1);
@@ -37,6 +39,7 @@ public class ChromosomesComparator implements Comparator<Chromosome> {
         return ret;
     }
 
+    // 清空缓存
     public void clearCache() {
         this.cache.clear();
     }
